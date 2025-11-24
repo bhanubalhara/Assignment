@@ -13,14 +13,18 @@ export default function Home() {
   const { mode, formData } = useForm();
   const [selectedField, setSelectedField] = useState<FormField | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    setMounted(true);
+    if (typeof window !== 'undefined') {
+      const handleResize = () => {
+        setIsMobile(window.innerWidth < 768);
+      };
+      handleResize();
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
   }, []);
 
   useEffect(() => {
@@ -38,7 +42,7 @@ export default function Home() {
     display: 'flex',
     minHeight: '100vh',
     backgroundColor: formData.theme.colors.background,
-    flexDirection: isMobile ? 'column' : 'row',
+    flexDirection: mounted && isMobile ? 'column' : 'row',
   };
 
   const mainContentStyle: React.CSSProperties = {

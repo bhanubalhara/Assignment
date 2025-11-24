@@ -14,14 +14,18 @@ export function FieldEditor({ field, onClose }: FieldEditorProps) {
   const { updateField, formData } = useForm();
   const theme = formData.theme;
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    setMounted(true);
+    if (typeof window !== 'undefined') {
+      const handleResize = () => {
+        setIsMobile(window.innerWidth < 768);
+      };
+      handleResize();
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
   }, []);
 
   const [formState, setFormState] = useState<Partial<FormField>>({
@@ -48,17 +52,17 @@ export function FieldEditor({ field, onClose }: FieldEditorProps) {
 
   const panelStyle: React.CSSProperties = {
     backgroundColor: theme.colors.background,
-    borderLeft: isMobile ? 'none' : `1px solid ${theme.colors.border}`,
-    borderTop: isMobile ? `1px solid ${theme.colors.border}` : 'none',
+    borderLeft: mounted && isMobile ? 'none' : `1px solid ${theme.colors.border}`,
+    borderTop: mounted && isMobile ? `1px solid ${theme.colors.border}` : 'none',
     padding: theme.spacing.large,
-    height: isMobile ? 'auto' : '100vh',
-    maxHeight: isMobile ? '80vh' : '100vh',
+    height: mounted && isMobile ? 'auto' : '100vh',
+    maxHeight: mounted && isMobile ? '80vh' : '100vh',
     overflowY: 'auto',
-    width: isMobile ? '100%' : '320px',
+    width: mounted && isMobile ? '100%' : '320px',
     position: 'fixed',
     right: 0,
-    top: isMobile ? 'auto' : 0,
-    bottom: isMobile ? 0 : 'auto',
+    top: mounted && isMobile ? 'auto' : 0,
+    bottom: mounted && isMobile ? 0 : 'auto',
     zIndex: 50,
     boxShadow: '0 0 20px rgba(0,0,0,0.1)',
   };

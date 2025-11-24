@@ -9,30 +9,34 @@ export function ThemeEditor() {
   const { formData, updateTheme } = useForm();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const theme = formData.theme;
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    setMounted(true);
+    if (typeof window !== 'undefined') {
+      const handleResize = () => {
+        setIsMobile(window.innerWidth < 768);
+      };
+      handleResize();
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
   }, []);
 
   const panelStyle: React.CSSProperties = {
     backgroundColor: theme.colors.background,
-    borderLeft: isMobile ? 'none' : `1px solid ${theme.colors.border}`,
-    borderTop: isMobile ? `1px solid ${theme.colors.border}` : 'none',
+    borderLeft: mounted && isMobile ? 'none' : `1px solid ${theme.colors.border}`,
+    borderTop: mounted && isMobile ? `1px solid ${theme.colors.border}` : 'none',
     padding: theme.spacing.large,
-    height: isMobile ? 'auto' : '100vh',
-    maxHeight: isMobile ? '80vh' : '100vh',
+    height: mounted && isMobile ? 'auto' : '100vh',
+    maxHeight: mounted && isMobile ? '80vh' : '100vh',
     overflowY: 'auto',
-    width: isMobile ? '100%' : '320px',
+    width: mounted && isMobile ? '100%' : '320px',
     position: 'fixed',
-    right: isOpen ? 0 : isMobile ? '-100%' : '-320px',
-    top: isMobile ? 'auto' : 0,
-    bottom: isMobile ? 0 : 'auto',
+    right: isOpen ? 0 : mounted && isMobile ? '-100%' : '-320px',
+    top: mounted && isMobile ? 'auto' : 0,
+    bottom: mounted && isMobile ? 0 : 'auto',
     zIndex: 50,
     transition: 'right 0.3s ease',
     boxShadow: '0 0 20px rgba(0,0,0,0.1)',
@@ -95,9 +99,9 @@ export function ThemeEditor() {
         onClick={() => setIsOpen(!isOpen)}
         style={{
           position: 'fixed',
-          right: isOpen ? (isMobile ? '100%' : '320px') : '0',
-          top: isMobile ? '10px' : '50%',
-          transform: isMobile ? 'none' : 'translateY(-50%)',
+          right: isOpen ? (mounted && isMobile ? '100%' : '320px') : '0',
+          top: mounted && isMobile ? '10px' : '50%',
+          transform: mounted && isMobile ? 'none' : 'translateY(-50%)',
           padding: theme.spacing.medium,
           backgroundColor: theme.colors.primary,
           color: 'white',

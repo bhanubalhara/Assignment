@@ -39,14 +39,18 @@ export function FieldPalette() {
   const { addField, formData } = useForm();
   const theme = formData.theme;
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    setMounted(true);
+    if (typeof window !== 'undefined') {
+      const handleResize = () => {
+        setIsMobile(window.innerWidth < 768);
+      };
+      handleResize();
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
   }, []);
 
   const handleAddField = (type: FieldType) => {
@@ -64,12 +68,12 @@ export function FieldPalette() {
 
   const paletteStyle: React.CSSProperties = {
     backgroundColor: theme.colors.background,
-    borderRight: isMobile ? 'none' : `1px solid ${theme.colors.border}`,
+    borderRight: mounted && isMobile ? 'none' : `1px solid ${theme.colors.border}`,
     padding: theme.spacing.medium,
-    height: isMobile ? 'auto' : '100vh',
+    height: mounted && isMobile ? 'auto' : '100vh',
     overflowY: 'auto',
-    width: isMobile ? '100%' : '256px',
-    borderBottom: isMobile ? `1px solid ${theme.colors.border}` : 'none',
+    width: mounted && isMobile ? '100%' : '256px',
+    borderBottom: mounted && isMobile ? `1px solid ${theme.colors.border}` : 'none',
   };
 
   const buttonStyle: React.CSSProperties = {

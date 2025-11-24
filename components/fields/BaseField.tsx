@@ -41,14 +41,14 @@ export function BaseField({ field, children, className = '' }: BaseFieldProps) {
   };
 
   const handleClick = (e: React.MouseEvent) => {
-    if (isEditMode && !(e.target as HTMLElement).closest('button')) {
+    if (isEditMode && typeof window !== 'undefined' && !(e.target as HTMLElement).closest('button')) {
       const event = new CustomEvent('field-click', { detail: { field } });
       window.dispatchEvent(event);
     }
   };
 
   const handleMouseEnter = () => {
-    if (isEditMode) {
+    if (isEditMode && typeof document !== 'undefined') {
       const element = document.querySelector(`[data-field-id="${field.id}"]`) as HTMLElement;
       if (element) {
         element.style.borderColor = theme.colors.primary;
@@ -58,7 +58,7 @@ export function BaseField({ field, children, className = '' }: BaseFieldProps) {
   };
 
   const handleMouseLeave = () => {
-    if (isEditMode) {
+    if (isEditMode && typeof document !== 'undefined') {
       const element = document.querySelector(`[data-field-id="${field.id}"]`) as HTMLElement;
       if (element) {
         element.style.borderColor = 'transparent';
